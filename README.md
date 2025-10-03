@@ -8,7 +8,7 @@ Un'applicazione web completa per la gestione dei task, sviluppata con Django e M
 
 ## 📸 Screenshot
 
-[Aggiungerai screenshot qui dopo]
+
 
 ## ✨ Funzionalità
 
