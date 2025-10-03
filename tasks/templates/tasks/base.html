@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="it">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{% static 'gestore task.ico' %}">
     <title>{% block title %}Gestore Task{% endblock %}</title>
     <style>
       * {
@@ -89,7 +91,7 @@
     </div>
 
     <div class="container">
-      <h1>📋 Gestore Task</h1>
+      <h1><img src="{% static 'gestore task.ico' %}" alt="Icona Gestore Task" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 8px;">GESTORE TASK</h1>
       {% block content %} {% endblock %}
     </div>
   </body>
