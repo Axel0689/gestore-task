@@ -1,0 +1,139 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Lista Task{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <h2>I miei Task</h2>
+    
+    <!-- Statistiche -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0;">
+        <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; color: #1976d2;">{{ total_tasks }}</div>
+            <div style="color: #666;">Totali</div>
+        </div>
+        <div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; color: #f39c12;">{{ pending_tasks }}</div>
+            <div style="color: #666;">Da fare</div>
+        </div>
+        <div style="background-color: #d4edda; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; color: #28a745;">{{ completed_tasks }}</div>
+            <div style="color: #666;">Completati</div>
+        </div>
+        <div style="background-color: #f8d7da; padding: 15px; border-radius: 8px; text-align: center;">
+            <div style="font-size: 24px; font-weight: bold; color: #dc3545;">{{ overdue_tasks }}</div>
+            <div style="color: #666;">Scaduti</div>
+        </div>
+    </div>
+    
+    <a href="{% url 'task_create' %}" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 4px; display: inline-block; margin-bottom: 15px;">
+        ➕ Nuovo Task
+    </a>
+    
+    <!-- Filtri -->
+    <form method="get" style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Stato:</label>
+                <select name="status" onchange="this.form.submit()" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                    <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tutti</option>
+                    <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>Da fare</option>
+                    <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>Completati</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Priorità:</label>
+                <select name="priority" onchange="this.form.submit()" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                    <option value="all" {% if filter_priority == 'all' %}selected{% endif %}>Tutte</option>
+                    <option value="high" {% if filter_priority == 'high' %}selected{% endif %}>Alta</option>
+                    <option value="medium" {% if filter_priority == 'medium' %}selected{% endif %}>Media</option>
+                    <option value="low" {% if filter_priority == 'low' %}selected{% endif %}>Bassa</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Assegnazione:</label>
+                <select name="user" onchange="this.form.submit()" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
+                    <option value="all" {% if filter_user == 'all' %}selected{% endif %}>Tutti</option>
+                    {% if user.is_authenticated %}
+                    <option value="me" {% if filter_user == 'me' %}selected{% endif %}>I miei task</option>
+                    {% endif %}
+                    <option value="unassigned" {% if filter_user == 'unassigned' %}selected{% endif %}>Non assegnati</option>
+                </select>
+            </div>
+        </div>
+        
+        {% if filter_status != 'all' or filter_priority != 'all' or filter_user != 'all' %}
+        <a href="{% url 'task_list' %}" style="display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none;">
+            🔄 Rimuovi filtri
+        </a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Lista Task -->
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+            <th style="padding: 12px; text-align: left;">Titolo</th>
+            <th style="padding: 12px; text-align: left;">Priorità</th>
+            <th style="padding: 12px; text-align: left;">Scadenza</th>
+            <th style="padding: 12px; text-align: left;">Categoria</th>
+            <th style="padding: 12px; text-align: left;">Assegnato a</th>
+            <th style="padding: 12px; text-align: center;">Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr style="border-bottom: 1px solid #dee2e6;" class="{% if task.is_overdue %}overdue{% endif %}">
+            <td style="padding: 12px;" class="{% if task.completed %}completed{% endif %}">
+                <a href="{% url 'task_detail' task.pk %}" style="text-decoration: none; color: #007bff;">
+                    {{ task.title }}
+                </a>
+            </td>
+            <td style="padding: 12px;">
+                <span class="priority-{{ task.priority }}">
+                    {{ task.get_priority_display }}
+                </span>
+            </td>
+            <td style="padding: 12px;">
+                {% if task.due_date %}
+                    {{ task.due_date|date:"d/m/Y H:i" }}
+                    {% if task.is_overdue %}
+                        <span style="color: red;">⚠️ Scaduto</span>
+                    {% endif %}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td style="padding: 12px;">
+                {{ task.category|default:"-" }}
+            </td>
+            <td style="padding: 12px;">
+                {% if task.assigned_to %}
+                    <span style="background-color: #e3f2fd; padding: 3px 8px; border-radius: 12px; font-size: 12px;">
+                        👤 {{ task.assigned_to.username }}
+                    </span>
+                {% else %}
+                    <span style="color: #999;">Non assegnato</span>
+                {% endif %}
+            </td>
+            <td style="padding: 12px; text-align: center;">
+                <a href="{% url 'task_toggle_complete' task.pk %}" 
+                   style="padding: 5px 10px; background-color: {% if task.completed %}#6c757d{% else %}#28a745{% endif %}; 
+                          color: white; text-decoration: none; border-radius: 4px; font-size: 12px;">
+                    {% if task.completed %}✓ Completato{% else %}○ Segna come fatto{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" style="padding: 20px; text-align: center; color: #6c757d;">
+                Nessun task trovato. {% if user.is_authenticated %}<a href="{% url 'task_create' %}">Creane uno nuovo!</a>{% else %}Effettua il login per creare task.{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

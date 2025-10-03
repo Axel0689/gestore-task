@@ -1,0 +1,58 @@
+{% extends 'tasks/base.html' %} {% block title %}Elimina Task{% endblock %} {%
+block content %}
+<div style="margin-bottom: 20px">
+  <a
+    href="{% url 'task_detail' task.pk %}"
+    style="color: #007bff; text-decoration: none"
+    >← Torna al task</a
+  >
+</div>
+
+<div
+  style="
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    padding: 20px;
+    border-radius: 8px;
+  "
+>
+  <h2 style="color: #856404">⚠️ Conferma Eliminazione</h2>
+
+  <p style="margin: 20px 0; font-size: 16px">
+    Sei sicuro di voler eliminare il task: <strong>"{{ task.title }}"</strong>?
+  </p>
+
+  <p style="color: #856404">Questa azione è irreversibile!</p>
+
+  <form method="post" style="margin-top: 30px">
+    {% csrf_token %}
+    <button
+      type="submit"
+      style="
+        padding: 10px 20px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+      "
+    >
+      🗑️ Sì, elimina
+    </button>
+    <a
+      href="{% url 'task_detail' task.pk %}"
+      style="
+        padding: 10px 20px;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+      "
+    >
+      Annulla
+    </a>
+  </form>
+</div>
+{% endblock %}

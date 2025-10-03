@@ -1,0 +1,69 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'task_list' %}" style="color: #007bff; text-decoration: none;">← Torna alla lista</a>
+</div>
+
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+    <h2 class="{% if task.completed %}completed{% endif %}">{{ task.title }}</h2>
+    
+    <div style="margin: 20px 0;">
+        <p><strong>Stato:</strong> 
+            {% if task.completed %}
+                <span style="color: green;">✓ Completato</span>
+            {% else %}
+                <span style="color: orange;">○ Da fare</span>
+            {% endif %}
+        </p>
+        
+        <p><strong>Priorità:</strong> 
+            <span class="priority-{{ task.priority }}">{{ task.get_priority_display }}</span>
+        </p>
+        
+        <p><strong>Categoria:</strong> {{ task.category|default:"Nessuna categoria" }}</p>
+        
+        <p><strong>Scadenza:</strong> 
+            {% if task.due_date %}
+                {{ task.due_date|date:"d/m/Y H:i" }}
+                {% if task.is_overdue %}
+                    <span style="color: red; font-weight: bold;">⚠️ SCADUTO</span>
+                {% endif %}
+            {% else %}
+                Nessuna scadenza
+            {% endif %}
+        </p>
+        
+        <p><strong>Assegnato a:</strong> {{ task.assigned_to|default:"Nessuno" }}</p>
+        
+        <p><strong>Creato il:</strong> {{ task.created_at|date:"d/m/Y H:i" }}</p>
+        
+        <p><strong>Ultimo aggiornamento:</strong> {{ task.updated_at|date:"d/m/Y H:i" }}</p>
+    </div>
+    
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+        <h3>Descrizione</h3>
+        <p style="white-space: pre-wrap;">{{ task.description|default:"Nessuna descrizione disponibile" }}</p>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <a href="{% url 'task_toggle_complete' task.pk %}" 
+           style="padding: 10px 20px; background-color: {% if task.completed %}#6c757d{% else %}#28a745{% endif %}; 
+                  color: white; text-decoration: none; border-radius: 4px; display: inline-block; margin-right: 10px;">
+            {% if task.completed %}Segna come da fare{% else %}Segna come completato{% endif %}
+        </a>
+        
+        <a href="{% url 'task_update' task.pk %}" 
+           style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; display: inline-block; margin-right: 10px;">
+            ✏️ Modifica
+        </a>
+        
+        <a href="{% url 'task_delete' task.pk %}" 
+           style="padding: 10px 20px; background-color: #dc3545; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">
+            🗑️ Elimina
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+  "
+>
+  <!-- Task per priorità -->
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px">
+    <h3>Task per Priorità</h3>
+    <div style="margin-top: 15px">
+      <div style="margin-bottom: 10px">
+        <span class="priority-high">Alta:</span> {{ high_priority }} task
+      </div>
+      <div style="margin-bottom: 10px">
+        <span class="priority-medium">Media:</span> {{ medium_priority }} task
+      </div>
+      <div style="margin-bottom: 10px">
+        <span class="priority-low">Bassa:</span> {{ low_priority }} task
+      </div>
+    </div>
+  </div>
+
+  <!-- Task per categoria -->
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+      <h3>Task per Categoria</h3>
+      <div style="margin-top: 15px;">
+          {% for cat in categories %}
+              <div style="margin-bottom: 10px;">
+                  <strong>
+                      {% if cat.category %}
+                          {{ cat.category }}
+                      {% else %}
+                          Senza categoria
+                      {% endif %}:
+                  </strong> 
+                  {{ cat.total }} task
+              </div>
+          {% empty %}
+              <p style="color: #999;">Nessuna categoria disponibile</p>
+          {% endfor %}
+      </div>
+  </div>
+
+  <!-- Task in scadenza -->
+  <div
+    style="
+      background-color: #fff3cd;
+      padding: 20px;
+      border-radius: 8px;
+      grid-column: span 2;
+    "
+  >
+    <h3>⏰ Task in Scadenza (prossimi 7 giorni)</h3>
+    <div style="margin-top: 15px">
+      {% for task in upcoming_tasks %}
+      <div
+        style="
+          padding: 10px;
+          background-color: white;
+          margin-bottom: 10px;
+          border-radius: 4px;
+          border-left: 4px solid #f39c12;
+        "
+      >
+        <a
+          href="{% url 'task_detail' task.pk %}"
+          style="color: #007bff; text-decoration: none; font-weight: bold"
+        >
+          {{ task.title }}
+        </a>
+        <span style="float: right; color: #666">
+          {{ task.due_date|date:"d/m/Y H:i" }}
+        </span>
+      </div>
+      {% empty %}
+      <p style="color: #999">Nessun task in scadenza nei prossimi 7 giorni</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 30px; text-align: center">
+  <a
+    href="{% url 'task_list' %}"
+    style="
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+    "
+  >
+    Vai alla Lista Completa →
+  </a>
+</div>{% endblock %}
