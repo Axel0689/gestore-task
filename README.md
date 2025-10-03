@@ -1,4 +1,4 @@
-# 📋 Gestore Task (To-Do List Avanzato)
+# <img src="tasks/static/gestore task.ico" alt="gestore task" width="60" align="center"> Gestore Task (To-Do List Avanzato)
 
 Un'applicazione web completa per la gestione dei task, sviluppata con Django e MySQL.
 
