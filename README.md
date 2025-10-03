@@ -77,9 +77,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 ### 4. Configura il Database
-1. Avvia XAMPP e il servizio MySQL
-2. Crea un database chiamato todo_db in phpMyAdmin
-3. Modifica todolist/settings.py con le tue credenziali MySQL (se diverse):
+1. Avvia **XAMPP** e il servizio **MySQL**
+2. Crea un database in **phpMyAdmin** (ad esempio chiamalo todo_db)
+3. Modifica **todolist/settings.py** con le tue credenziali MySQL (se diverse):
 
 ```python
 DATABASES = {
